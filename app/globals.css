@@ -13,6 +13,7 @@
 /* Essential instructions stay legible even on small screens. */
 .text-button,.start-tour,.section-control label{font-size:14px}.story p{font-size:15px}.mode-control [data-slot=tabs-trigger]{font-size:14px}.story.inside p{font-size:14px}.journey-stages span{font-size:11px}.eyebrow{font-size:11px}
 @media(max-width:760px){.story p{font-size:13px;line-height:1.6}.story.inside p{font-size:13px;line-height:1.55}.story.inside{max-width:240px}.story.inside h1{font-size:24px}.text-button,.start-tour,.section-control label{font-size:12px}.mode-control [data-slot=tabs-trigger]{font-size:12px}.journey-stages span{font-size:9px}.eyebrow{font-size:9px}.story.inside .eyebrow{font-size:9px}.story{top:128px}.story.inside{top:auto}.section-control small{display:none}}
+.story,.house-caption,.scroll-hint,.design-note{display:none!important}
 .mode-control [data-slot='tabs-trigger']{flex:0 0 auto;min-width:108px;white-space:nowrap;justify-content:center}
 @media(max-width:760px){.mode-control [data-slot='tabs-list']{width:max-content}.mode-control [data-slot='tabs-trigger']{min-width:96px}}
 .mode-control [data-slot='tabs-trigger']{white-space:nowrap}
