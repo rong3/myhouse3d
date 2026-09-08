@@ -729,12 +729,13 @@ export function createViewer(
       if (i === 0) {
         wall(walls, 0, SITE.houseDepth, 0.98, SITE.houseDepth);
         wall(walls, 3.78, SITE.houseDepth, SITE.width, SITE.houseDepth);
-        doubleDoor(walls, 2.38, SITE.houseDepth, 2.8);
+        // Main living-room entrance, set in front of the facade for a clear cutaway view.
+        doubleDoor(walls, 2.38, SITE.houseDepth + 0.13, 2.8);
         box(
           g,
           2.38,
           -0.08,
-          SITE.houseDepth + 0.08,
+          SITE.houseDepth + 0.18,
           2.9,
           0.12,
           0.34,
@@ -771,7 +772,7 @@ export function createViewer(
         wall(walls, 3.14, 0, 4.76, 0);
         windowPanel(walls, 1.225, 0, 1.45);
         wall(walls, 0.5, 0, 1.95, 0, 0.79);
-        door(walls, 2.68, 0, 0.96);
+        door(walls, 2.68, -0.13, 0.96);
         box(g, 2.68, -0.12, -0.22, 1.1, 0.18, 0.44, stone);
       } else {
         wall(walls, 0, 0, 0.98, 0);
