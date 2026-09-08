@@ -272,7 +272,7 @@ export default function Home() {
         className="world"
         role="application"
         tabIndex={0}
-        aria-label="Mô hình nhà 3D. Kéo để xoay; chụm hai ngón để thu phóng. Dùng các nút góc nhìn để điều khiển bằng bàn phím."
+        aria-label="Mô hình nhà 3D. Kéo trái để xoay, kéo chuột phải hoặc dùng hai ngón để di chuyển, cuộn để thu phóng. Dùng WASD hoặc phím mũi tên để đi quanh nhà."
       />
       {!hidden && (
         <>
@@ -506,8 +506,9 @@ export default function Home() {
           <div className="help-row">
             <Move3D size={19} />
             <p>
-              Kéo để xoay. Cuộn chuột hoặc chụm hai ngón để thu phóng. Bật mặt
-              cắt để nhìn vào các phòng.
+              Kéo trái để xoay. Kéo chuột phải hoặc dùng hai ngón để di chuyển.
+              Cuộn chuột hoặc chụm hai ngón để thu phóng. Bấm vào mô hình rồi
+              dùng WASD hoặc phím mũi tên để đi quanh nhà.
             </p>
           </div>
           <label htmlFor="section-settings" className="settings-switch">

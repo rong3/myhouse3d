@@ -63,6 +63,14 @@ export function createViewer(
   controls.minDistance = 1.3;
   controls.maxDistance = 110;
   controls.maxPolarAngle = Math.PI * 0.495;
+  controls.enablePan = true;
+  controls.screenSpacePanning = false;
+  controls.panSpeed = 0.85;
+  controls.rotateSpeed = 0.52;
+  controls.zoomSpeed = 0.9;
+  controls.mouseButtons.LEFT = T.MOUSE.ROTATE;
+  controls.mouseButtons.MIDDLE = T.MOUSE.DOLLY;
+  controls.mouseButtons.RIGHT = T.MOUSE.PAN;
   controls.enabled = false;
   controls.target.set(2.38, 0, 5.8);
   const ambient = new T.HemisphereLight(0xffffff, 0xa5b0b7, 1.4);
@@ -1162,6 +1170,29 @@ export function createViewer(
   let mode = 'free',
     progress = 0,
     dirty = true;
+  const keys = new Set<string>();
+  const moveKeys = new Set([
+    'KeyW',
+    'KeyA',
+    'KeyS',
+    'KeyD',
+    'ArrowUp',
+    'ArrowDown',
+    'ArrowLeft',
+    'ArrowRight',
+    'ShiftLeft',
+    'ShiftRight',
+  ]);
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (mode !== 'free' || !moveKeys.has(event.code)) return;
+    event.preventDefault();
+    keys.add(event.code);
+  };
+  const onKeyUp = (event: KeyboardEvent) => keys.delete(event.code);
+  const focusHost = () => host.focus();
+  host.addEventListener('keydown', onKeyDown);
+  host.addEventListener('keyup', onKeyUp);
+  renderer.domElement.addEventListener('pointerdown', focusHost);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const changed = () => {
     dirty = true;
@@ -1275,8 +1306,41 @@ export function createViewer(
       7,
       dt,
     );
-    if (mode === 'free') controls.update();
-    else camera.lookAt(controls.target);
+    if (mode === 'free') {
+      if (keys.size) {
+        const forward = new T.Vector3().subVectors(
+          controls.target,
+          camera.position,
+        );
+        forward.y = 0;
+        if (forward.lengthSq() > 0) forward.normalize();
+        const right = new T.Vector3(-forward.z, 0, forward.x);
+        const direction = new T.Vector3();
+        if (keys.has('KeyW') || keys.has('ArrowUp')) direction.add(forward);
+        if (keys.has('KeyS') || keys.has('ArrowDown')) direction.sub(forward);
+        if (keys.has('KeyD') || keys.has('ArrowRight')) direction.add(right);
+        if (keys.has('KeyA') || keys.has('ArrowLeft')) direction.sub(right);
+        if (direction.lengthSq() > 0) {
+          const speed =
+            3.2 *
+            (keys.has('ShiftLeft') || keys.has('ShiftRight') ? 2 : 1) *
+            dt;
+          direction.normalize().multiplyScalar(speed);
+          camera.position.add(direction);
+          controls.target.add(direction);
+          const minX = -7,
+            maxX = SITE.width + 7,
+            minZ = -9,
+            maxZ = gateZ + 11;
+          camera.position.x = T.MathUtils.clamp(camera.position.x, minX, maxX);
+          camera.position.z = T.MathUtils.clamp(camera.position.z, minZ, maxZ);
+          controls.target.x = T.MathUtils.clamp(controls.target.x, minX, maxX);
+          controls.target.z = T.MathUtils.clamp(controls.target.z, minZ, maxZ);
+          dirty = true;
+        }
+      }
+      controls.update();
+    } else camera.lookAt(controls.target);
     if (dirty) {
       renderer.render(scene, camera);
       dirty = false;
@@ -1303,6 +1367,9 @@ export function createViewer(
       controls.removeEventListener('change', changed);
       controls.dispose();
       renderer.domElement.removeEventListener('pointerdown', down);
+      renderer.domElement.removeEventListener('pointerdown', focusHost);
+      host.removeEventListener('keydown', onKeyDown);
+      host.removeEventListener('keyup', onKeyUp);
       const geometries = new Set<T.BufferGeometry>(),
         materials = new Set<T.Material>(),
         textures = new Set<T.Texture>();
