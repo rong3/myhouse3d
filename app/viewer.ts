@@ -290,7 +290,8 @@ export function createViewer(
     g.position.set(x, 0, z);
     g.rotation.y = rot;
     p.add(g);
-    g.userData.section = true;
+    // Keep the complete door visible when the house is cut open.
+    g.userData.section = false;
     box(g, -width / 2, 1.15, 0, 0.055, 2.3, 0.12, wood);
     box(g, width / 2, 1.15, 0, 0.055, 2.3, 0.12, wood);
     box(g, 0, 2.28, 0, width, 0.06, 0.12, wood);
@@ -322,7 +323,8 @@ export function createViewer(
     const g = new T.Group();
     g.position.set(x, 0, z);
     g.rotation.y = rot;
-    g.userData.section = true;
+    // Keep the complete double door visible when the house is cut open.
+    g.userData.section = false;
     box(g, -width / 2, 1.15, 0, 0.07, 2.3, 0.13, wood);
     box(g, width / 2, 1.15, 0, 0.07, 2.3, 0.13, wood);
     box(g, 0, 2.28, 0, width, 0.07, 0.13, wood);
@@ -339,12 +341,14 @@ export function createViewer(
         0,
         leafWidth,
         2.2,
-        0.045,
-        glass,
+        0.055,
+        mat('#9ab8ba', 0.28, 0.05),
         0.01,
       );
       box(leaf, side * (leafWidth / 2), 1.1, -0.035, 0.035, 2.16, 0.07, black);
       box(leaf, side * (leafWidth / 2), 1.1, 0, leafWidth, 0.035, 0.07, black);
+      box(leaf, side * (leafWidth / 2), 2.18, 0, leafWidth, 0.035, 0.07, black);
+      box(leaf, side * (leafWidth / 2), 0.03, 0, leafWidth, 0.035, 0.07, black);
       box(leaf, side * 0.12, 1.08, -0.065, 0.035, 0.07, 0.035, black, 0.01);
     }
   }

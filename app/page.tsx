@@ -37,7 +37,7 @@ export default function Home() {
   const [mode, setMode] = useState('free'),
     [progress, setProgress] = useState(0),
     [playing, setPlaying] = useState(false);
-  const [cut, setCut] = useState(false),
+  const [cut, setCut] = useState(true),
     [plan, setPlan] = useState(false),
     [planFloor, setPlanFloor] = useState(0);
   const [settings, setSettings] = useState(false),
@@ -94,7 +94,7 @@ export default function Home() {
           v = createViewer(host, () => {});
           api.current = v;
           v.setMode('free');
-          v.setSection(false);
+          v.setSection(true);
           host
             .querySelector('canvas')
             ?.addEventListener('webglcontextlost', lost);
