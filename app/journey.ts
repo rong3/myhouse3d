@@ -45,7 +45,7 @@ export const tourFrames: TourFrame[] = [
     look: [2.68, 1.25, 11.6],
     ceiling: 6.99,
     chapter: 0,
-    title: 'Lối vào phía đầu xéo',
+    title: 'Qua sân vào mặt nhà thẳng',
     description: '',
     floor: 0,
   },

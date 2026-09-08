@@ -465,8 +465,8 @@ export default function Home() {
               <dd>4,76 m</dd>
             </div>
             <div>
-              <dt>Chiều dài nhà tối đa</dt>
-              <dd>13,25 m</dd>
+              <dt>Chiều dài nhà · ước lượng</dt>
+              <dd>≈ 12,61 m</dd>
             </div>
             <div>
               <dt>Cao độ lầu 1 / lầu 2</dt>
@@ -488,19 +488,19 @@ export default function Home() {
             </div>
           </dl>
           <p>
-            Giữ hình dáng và vị trí các phòng theo mặt bằng: phòng khách ở đầu
-            thẳng, bàn ăn cạnh thang, bếp và WC ở đầu xéo. Thu gọn sofa, tủ và
-            bố trí bàn ăn bốn chỗ để mở lối đi.
+            Nhà chữ nhật 4,76 × 12,61 m, khoảng 60 m². Giữ bố trí phòng khách
+            phía sau, bàn ăn cạnh thang, bếp và WC phía sân. Tường, sàn, bếp và
+            ban công đều thẳng, vuông góc.
           </p>
           <p>
-            Theo hướng bạn xác nhận, sân và cổng nằm phía đầu xéo; cửa đầu thẳng
-            thông ra mặt tiền sau. Ban công sâu 1,20 m được chuyển về phía sân.
+            Chỉ ranh đất phía cổng bị xéo; sân nằm giữa ranh này và mặt nhà
+            thẳng. Ban công sâu 1,20 m hướng ra sân. Cửa phía sau thông ra mặt
+            tiền thứ hai.
           </p>
           <p className="proposal-note">
-            Sân 56 m² được ước lượng theo bề ngang 4,76 m, chưa phải kích thước
-            đo đất. Ban công chuyển phía là điều chỉnh so với bản vẽ gốc. Diện
-            tích nhà theo đường bao khoảng 59,71 m², tương ứng số ghi 60 m² trên
-            bản vẽ.
+            Chiều dài nhà, sân 56 m² và độ xéo ranh đất là số ước lượng theo yêu
+            cầu, chưa phải kích thước đo thực địa. Hình nhà chữ nhật và ban công
+            phía sân được cập nhật theo xác nhận của bạn.
           </p>
           <div className="help-row">
             <Move3D size={19} />

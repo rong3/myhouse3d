@@ -3,6 +3,7 @@ import {
   SITE,
   frontZ,
   gateZ,
+  boundaryZ,
   houseOutline,
   upperOutline,
   yardOutline,
@@ -46,7 +47,7 @@ export function createViewer(
   environmentScene.dispose();
   pmrem.dispose();
   const sideCuts = [0, 3.6, 7.2, 10.5].map(
-    (y) => new T.Plane(new T.Vector3(0, -1, 0), y + 0.3),
+    () => new T.Plane(new T.Vector3(0, -1, 0), 40),
   );
 
   const camera = new T.PerspectiveCamera(
@@ -611,10 +612,10 @@ export function createViewer(
       );
 
     if (i < 2) {
-      wall(walls, 0, 0, 0, 11.84);
-      wall(walls, 4.76, 0, 4.76, 13.25);
-      const angle = -Math.atan2(1.41, 4.76);
-      // Main entrance and balcony face the oblique edge, as confirmed by the owner.
+      wall(walls, 0, 0, 0, SITE.houseDepth);
+      wall(walls, 4.76, 0, 4.76, SITE.houseDepth);
+      const angle = 0;
+      // Straight house facade and balcony face the courtyard.
       for (const [a, b] of [
         [0, 0.5],
         [1.95, 2.22],
@@ -630,7 +631,7 @@ export function createViewer(
         2.38,
         3.04,
         frontZ(2.38),
-        Math.hypot(4.76, 1.41),
+        SITE.width,
         0.74,
         0.16,
         cream,
@@ -658,14 +659,14 @@ export function createViewer(
       }
       const rearLintel = box(walls, 2.38, 3.04, 0, 2.8, 0.74, 0.16, cream);
       rearLintel.userData.section = true;
-      // Floor-edge beams follow the plan instead of cutting the wedge off.
+      // Floor-edge beams and all walls stay rectangular.
       for (const y of [-0.075, 3.38]) {
         const beam = box(
           g,
           2.38,
           y,
           frontZ(2.38),
-          Math.hypot(4.76, 1.41),
+          SITE.width,
           0.15,
           0.22,
           cream,
@@ -712,7 +713,7 @@ export function createViewer(
       stairs(g);
       wall(walls, 3.16, 8.34, 4.76, 8.34);
       wall(walls, 3.16, 8.34, 3.16, 9.9);
-      wall(walls, 3.16, 10.8, 3.16, 12.777);
+      wall(walls, 3.16, 10.8, 3.16, SITE.houseDepth);
       door(walls, 3.16, 10.35, 0.9, Math.PI / 2);
       wall(walls, 3.16, 9.95, 4.76, 9.95);
       box(furn, 0.46, 0.45, 10.3, 0.67, 0.87, 2.1, wood, 0.02);
@@ -737,8 +738,8 @@ export function createViewer(
       box(furn, 0.46, 0.925, 8.78, 0.7, 1.81, 0.72, mat('#788485'), 0.03);
       box(furn, 0.83, 1.0, 8.78, 0.04, 0.045, 0.51, black);
       const counter = new T.Group();
-      counter.position.set(1.35, 0, 11.89);
-      counter.rotation.y = -Math.atan2(1.41, 4.76);
+      counter.position.set(1.35, 0, SITE.houseDepth - 0.37);
+      counter.rotation.y = 0;
       furn.add(counter);
       box(counter, 0, 0.45, 0, 1.55, 0.9, 0.58, wood);
       box(counter, 0, 0.93, 0, 1.6, 0.06, 0.62, white);
@@ -751,7 +752,7 @@ export function createViewer(
       wash.position.set(4.23, 0.46, 9.11);
       furn.add(wash);
       sink(furn, 3.6, 8.72);
-      toilet(furn, 4.15, 12.15);
+      toilet(furn, 4.15, SITE.houseDepth - 0.52);
       sink(furn, 4.19, 10.48);
       box(furn, 4.68, 1.52, 10.48, 0.035, 0.8, 0.58, mat('#a5c0bf', 0.08, 0.6));
     }
@@ -821,14 +822,17 @@ export function createViewer(
         line(
           g,
           [x, 0.008, 8.45],
-          [x, 0.008, 11.8 + (x * 1.41) / 4.76],
+          [x, 0.008, SITE.houseDepth + SITE.balconyDepth - 0.1],
           0.005,
           mat('#a5aaa2'),
         );
       }
-      for (let z = 0.6; z < 12.7; z += 0.6) {
-        const w = z > 11.84 ? ((13.25 - z) * 4.76) / 1.41 : 4.6;
-        const start = z > 11.84 ? 4.76 - w : 0.1;
+      for (
+        let z = 0.6;
+        z < SITE.houseDepth + SITE.balconyDepth - 0.1;
+        z += 0.6
+      ) {
+        const start = 0.1;
         if (z < 2.75 || z > 8.4)
           line(g, [start, 0.009, z], [4.65, 0.009, z], 0.005, mat('#a5aaa2'));
       }
@@ -897,22 +901,32 @@ export function createViewer(
     soil = mat('#514c40');
   poly(yard, yardOutline, -0.025, 0.15, paving);
   // Two street frontages provide a legible main gate and a separate rear exit.
-  box(scene, 2.38, -0.32, gateZ + 1.15, 7.4, 0.08, 1.6, mat('#bbc5ca'));
+  const frontStreet = box(
+    scene,
+    2.38,
+    -0.32,
+    gateZ + 1.15,
+    7.4,
+    0.08,
+    1.6,
+    mat('#bbc5ca'),
+  );
+  frontStreet.rotation.y = -Math.atan2(SITE.streetSkew, SITE.width);
   box(scene, 2.38, -0.32, -1.15, 7.4, 0.08, 1.2, mat('#bbc5ca'));
   for (const x of [0.04, 4.72]) {
     const from = frontZ(x),
-      len = gateZ - from;
+      len = boundaryZ(x) - from;
     box(yard, x, 0.54, from + len / 2, 0.13, 1.15, len, cream);
     box(yard, x, 1.13, from + len / 2, 0.18, 0.045, len, paving);
-    for (const z of [from + 1, gateZ - 3, gateZ])
+    for (const z of [from + 1, boundaryZ(x) - 3, boundaryZ(x)])
       box(yard, x, 0.9, z, 0.2, 1.85, 0.2, cream);
   }
-  for (let z = 14.65; z < gateZ - 0.25; z += 0.62)
+  for (let z = 14.65; z < boundaryZ(0) - 0.25; z += 0.62)
     line(yard, [0.64, -0.018, z], [4.12, -0.018, z], 0.005, mat('#b0b9b1'));
   // Recessed planting stays at the edges; the middle remains usable open court.
   for (const x of [0.37, 4.39]) {
     const from = frontZ(x) + 1.45,
-      to = gateZ - 1.45,
+      to = boundaryZ(x) - 1.45,
       len = to - from;
     box(yard, x, 0.1, (from + to) / 2, 0.55, 0.24, len, cream, 0.025);
     box(yard, x, 0.225, (from + to) / 2, 0.45, 0.022, len - 0.12, soil);
@@ -932,7 +946,7 @@ export function createViewer(
         );
     }
   }
-  // The angular pocket is landscaped rather than deleting the house corner.
+  // Planting at the rectangular house frontage leaves the entrance clear.
   planter(yard, 0.62, frontZ(0.62) + 0.65, 0.66, 0.55);
   planter(yard, 4.08, frontZ(4.08) + 0.68, 0.72, 0.55);
   function tree(x: number, z: number) {
@@ -981,18 +995,24 @@ export function createViewer(
     0.02,
   );
   rearLanding.userData.exit = true;
-  for (const x of [0.78, 3.98]) {
-    box(yard, x, 1.02, gateZ, 0.22, 2.1, 0.25, cream);
-    box(yard, x, 1.6, gateZ + 0.15, 0.08, 0.22, 0.035, fence);
-    box(yard, x, 1.6, gateZ + 0.175, 0.05, 0.16, 0.014, mat('#ffe4b9'));
+
+  // Only this entrance boundary follows the estimated skew of the land.
+  const gateFrame = new T.Group();
+  gateFrame.position.set(SITE.width / 2, 0, gateZ);
+  gateFrame.rotation.y = -Math.atan2(SITE.streetSkew, SITE.width);
+  yard.add(gateFrame);
+  for (const x of [-1.6, 1.6]) {
+    box(gateFrame, x, 1.02, 0, 0.22, 2.1, 0.25, cream);
+    box(gateFrame, x, 1.6, 0.15, 0.08, 0.22, 0.035, fence);
+    box(gateFrame, x, 1.6, 0.175, 0.05, 0.16, 0.014, mat('#ffe4b9'));
   }
-  for (const x of [0.34, 4.4])
-    box(yard, x, 0.76, gateZ, 0.56, 1.55, 0.13, cream);
+  for (const x of [-2.075, 2.075])
+    box(gateFrame, x, 0.76, 0, 0.75, 1.55, 0.13, cream);
   const gateLeaves: T.Group[] = [];
   for (let side = 0; side < 2; side++) {
     const g = new T.Group();
-    g.position.set(side === 0 ? 0.9 : 3.86, 0, gateZ);
-    yard.add(g);
+    g.position.set(side === 0 ? -1.48 : 1.48, 0, 0);
+    gateFrame.add(g);
     gateLeaves.push(g);
     const sign = side === 0 ? 1 : -1;
     for (const y of [0.12, 1.86])
@@ -1001,7 +1021,7 @@ export function createViewer(
       box(g, sign * (0.025 + j * 0.095), 0.99, 0, 0.035, 1.74, 0.045, fence);
     box(g, sign * 1.35, 0.99, 0.055, 0.025, 0.33, 0.025, wood);
   }
-  box(yard, 2.38, -0.006, gateZ - 0.22, 2.92, 0.015, 0.1, fence);
+  box(gateFrame, 0, -0.006, -0.22, 2.92, 0.015, 0.1, fence);
   let mode = 'free',
     progress = 0,
     dirty = true;
