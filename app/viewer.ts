@@ -321,7 +321,7 @@ export function createViewer(
       0.008,
     );
   }
-  function doubleDoor(
+  function xingfaSlidingDoor(
     p: T.Group,
     x: number,
     z: number,
@@ -331,55 +331,44 @@ export function createViewer(
     const g = new T.Group();
     g.position.set(x, 0, z);
     g.rotation.y = rot;
-    // Keep the complete double door visible when the house is cut open.
+    p.add(g);
+    // Four-panel Xingfa system: the two middle panels slide outward to create
+    // a generous central opening for light and cross ventilation.
     g.userData.section = false;
-    box(g, -width / 2, 1.15, 0, 0.07, 2.3, 0.13, wood);
-    box(g, width / 2, 1.15, 0, 0.07, 2.3, 0.13, wood);
-    box(g, 0, 2.28, 0, width, 0.07, 0.13, wood);
-    for (const side of [-1, 1]) {
-      const leaf = new T.Group();
-      leaf.position.x = side * 0.025;
-      leaf.rotation.y = side * 0.12;
-      g.add(leaf);
-      const leafWidth = width / 2 - 0.07;
-      box(
-        leaf,
-        side * (leafWidth / 2),
-        1.1,
-        0,
-        leafWidth,
-        2.2,
-        0.06,
-        wood,
-        0.01,
-      );
-      box(
-        leaf,
-        side * (leafWidth / 2),
-        1.34,
-        -0.038,
-        leafWidth - 0.14,
-        1.38,
-        0.012,
-        mat('#58777b', 0.34, 0.08),
-        0.008,
-      );
-      box(leaf, side * (leafWidth / 2), 1.1, -0.035, 0.035, 2.16, 0.07, black);
-      box(leaf, side * (leafWidth / 2), 1.1, 0, leafWidth, 0.035, 0.07, black);
-      box(leaf, side * (leafWidth / 2), 2.18, 0, leafWidth, 0.035, 0.07, black);
-      box(leaf, side * (leafWidth / 2), 0.03, 0, leafWidth, 0.035, 0.07, black);
-      box(
-        leaf,
-        side * (leafWidth / 2),
-        0.43,
-        -0.045,
-        leafWidth - 0.14,
-        0.62,
-        0.012,
-        wood,
-        0.008,
-      );
-      box(leaf, side * 0.12, 1.08, -0.065, 0.035, 0.07, 0.035, black, 0.01);
+    const height = 2.62;
+    box(g, -width / 2, height / 2, 0, 0.085, height, 0.14, black);
+    box(g, width / 2, height / 2, 0, 0.085, height, 0.14, black);
+    box(g, 0, height, 0, width, 0.085, 0.14, black);
+    box(g, 0, 0.045, 0, width, 0.07, 0.15, black);
+    const panelWidth = width / 4 - 0.055;
+    const addPanel = (px: number, depth: number, sliding = false) => {
+      const panel = new T.Group();
+      panel.position.set(px, 0, depth);
+      g.add(panel);
+      box(panel, 0, height / 2, 0, panelWidth, height - 0.12, 0.025, glass);
+      for (const dx of [-panelWidth / 2, panelWidth / 2])
+        box(panel, dx, height / 2, 0, 0.055, height - 0.08, 0.075, black);
+      for (const y of [0.08, height - 0.05])
+        box(panel, 0, y, 0, panelWidth, 0.055, 0.075, black);
+      if (sliding)
+        box(
+          panel,
+          px < 0 ? panelWidth / 2 - 0.08 : -panelWidth / 2 + 0.08,
+          1.18,
+          0.065,
+          0.035,
+          0.34,
+          0.035,
+          black,
+          0.01,
+        );
+    };
+    addPanel(-width * 0.375, 0);
+    addPanel(width * 0.375, 0);
+    addPanel(-width * 0.34, -0.055, true);
+    addPanel(width * 0.34, -0.055, true);
+    for (const xTrack of [-0.055, 0.055]) {
+      box(g, 0, 0.085, xTrack, width - 0.1, 0.025, 0.025, black);
     }
   }
   function windowPanel(p: T.Group, x: number, z: number, w: number, rot = 0) {
@@ -735,21 +724,90 @@ export function createViewer(
 
       // A broad main doorway leads directly to the living room.
       if (i === 0) {
-        wall(walls, 0, SITE.houseDepth, 0.98, SITE.houseDepth);
-        wall(walls, 3.78, SITE.houseDepth, SITE.width, SITE.houseDepth);
-        // Main living-room entrance, set in front of the facade for a clear cutaway view.
-        doubleDoor(walls, 2.38, SITE.houseDepth + 0.13, 2.8);
+        wall(walls, 0, SITE.houseDepth, 0.68, SITE.houseDepth);
+        wall(walls, 4.08, SITE.houseDepth, SITE.width, SITE.houseDepth);
+        // Large Xingfa entrance opens directly into the living room.
+        xingfaSlidingDoor(walls, 2.38, SITE.houseDepth + 0.14, 3.4);
         box(
           g,
           2.38,
           -0.08,
           SITE.houseDepth + 0.18,
-          2.9,
+          3.55,
           0.12,
           0.34,
           stone,
           0.02,
         );
+        // A slim portal, timber reveals and canopy give the entrance depth.
+        for (const x of [0.42, 4.34]) {
+          box(
+            g,
+            x,
+            1.46,
+            SITE.houseDepth + 0.2,
+            0.28,
+            2.92,
+            0.28,
+            darkwood,
+            0.025,
+          );
+          box(
+            g,
+            x,
+            1.72,
+            SITE.houseDepth + 0.39,
+            0.08,
+            0.3,
+            0.08,
+            black,
+            0.015,
+          );
+          box(
+            g,
+            x,
+            1.72,
+            SITE.houseDepth + 0.435,
+            0.045,
+            0.18,
+            0.02,
+            mat('#ffd89b'),
+          );
+        }
+        box(
+          g,
+          2.38,
+          2.82,
+          SITE.houseDepth + 0.49,
+          4.18,
+          0.16,
+          0.9,
+          black,
+          0.035,
+        );
+        box(
+          g,
+          2.38,
+          2.7,
+          SITE.houseDepth + 0.5,
+          3.88,
+          0.055,
+          0.82,
+          wood,
+          0.018,
+        );
+        for (let x = 0.72; x <= 4.04; x += 0.42)
+          box(
+            g,
+            x,
+            2.66,
+            SITE.houseDepth + 0.54,
+            0.055,
+            0.055,
+            0.7,
+            darkwood,
+            0.01,
+          );
       } else {
         for (const [a, b] of [
           [0, 0.5],
