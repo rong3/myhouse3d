@@ -457,7 +457,7 @@ export default function Home() {
         <DialogContent className="settings-dialog">
           <DialogTitle>Phương án không gian</DialogTitle>
           <p className="dialog-lead">
-            Cổng thẳng · Nội thất mở · Hai phòng ngủ
+            Hai mặt tiền · Sân rộng · Giữ bố trí mặt bằng
           </p>
           <dl className="project-dimensions">
             <div>
@@ -465,7 +465,7 @@ export default function Home() {
               <dd>4,76 m</dd>
             </div>
             <div>
-              <dt>Chiều dài tối đa</dt>
+              <dt>Chiều dài nhà tối đa</dt>
               <dd>13,25 m</dd>
             </div>
             <div>
@@ -477,15 +477,30 @@ export default function Home() {
               <dd>10,50 m</dd>
             </div>
           </dl>
+          <dl className="project-dimensions">
+            <div>
+              <dt>Sân trước · ước lượng</dt>
+              <dd>56 m²</dd>
+            </div>
+            <div>
+              <dt>Chiều sâu sân trung bình</dt>
+              <dd>≈ 11,8 m</dd>
+            </div>
+          </dl>
           <p>
-            Cổng chuyển về phía cạnh chéo. Mặt nhà được lùi về đường thẳng 11,84
-            m; khoảng phía cổng dành cho sân và bồn hoa. Phòng khách hướng cổng,
-            bếp và bàn ăn ở cuối nhà; giữ lõi thang và hai phòng ngủ.
+            Giữ hình dáng và vị trí các phòng theo mặt bằng: phòng khách ở đầu
+            thẳng, bàn ăn cạnh thang, bếp và WC ở đầu xéo. Thu gọn sofa, tủ và
+            bố trí bàn ăn bốn chỗ để mở lối đi.
+          </p>
+          <p>
+            Theo hướng bạn xác nhận, sân và cổng nằm phía đầu xéo; cửa đầu thẳng
+            thông ra mặt tiền sau. Ban công sâu 1,20 m được chuyển về phía sân.
           </p>
           <p className="proposal-note">
-            Đây là phương án bố trí mới. Phần nắn thẳng ranh chéo, diện tích sân
-            và thay đổi khu vệ sinh cần đối chiếu ranh đất, kết cấu và đường kỹ
-            thuật trước khi triển khai.
+            Sân 56 m² được ước lượng theo bề ngang 4,76 m, chưa phải kích thước
+            đo đất. Ban công chuyển phía là điều chỉnh so với bản vẽ gốc. Diện
+            tích nhà theo đường bao khoảng 59,71 m², tương ứng số ghi 60 m² trên
+            bản vẽ.
           </p>
           <div className="help-row">
             <Move3D size={19} />
