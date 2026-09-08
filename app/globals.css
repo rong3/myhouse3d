@@ -470,6 +470,24 @@ button:hover:not(:disabled) {
 .help-row svg {
   flex-shrink: 0;
 }
+.help-row p {
+  line-height: 1.65;
+}
+.help-row strong {
+  color: #435b60;
+  font-weight: 650;
+}
+.help-row kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  border: 1px solid #cbd6d1;
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: #f4f7f3;
+  color: #52634e;
+  font-size: 0.86em;
+  line-height: 1.2;
+}
 .settings-switch {
   display: flex;
   align-items: center;

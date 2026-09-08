@@ -506,9 +506,13 @@ export default function Home() {
           <div className="help-row">
             <Move3D size={19} />
             <p>
-              Kéo trái để xoay. Kéo chuột phải hoặc dùng hai ngón để di chuyển.
-              Cuộn chuột hoặc chụm hai ngón để thu phóng. Bấm vào mô hình rồi
-              dùng WASD hoặc phím mũi tên để đi quanh nhà.
+              <strong>Máy tính:</strong> kéo chuột trái để xoay, kéo chuột phải
+              để di chuyển, cuộn để zoom. Bấm vào mô hình rồi dùng{' '}
+              <kbd>W A S D</kbd> hoặc phím mũi tên để đi quanh nhà; giữ{' '}
+              <kbd>Shift</kbd> để đi nhanh.
+              <br />
+              <strong>Điện thoại:</strong> kéo một ngón để xoay, kéo hai ngón để
+              di chuyển, chụm hoặc tách hai ngón để zoom.
             </p>
           </div>
           <label htmlFor="section-settings" className="settings-switch">
