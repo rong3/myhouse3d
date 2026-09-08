@@ -291,15 +291,62 @@ export function createViewer(
     g.rotation.y = rot;
     p.add(g);
     g.userData.section = true;
-    box(g, -width / 2, 1.15, 0, 0.055, 2.3, 0.15, wood);
-    box(g, width / 2, 1.15, 0, 0.055, 2.3, 0.15, wood);
-    box(g, 0, 2.28, 0, width, 0.06, 0.15, wood);
+    box(g, -width / 2, 1.15, 0, 0.055, 2.3, 0.12, wood);
+    box(g, width / 2, 1.15, 0, 0.055, 2.3, 0.12, wood);
+    box(g, 0, 2.28, 0, width, 0.06, 0.12, wood);
     const leaf = new T.Group();
     leaf.position.x = -width / 2;
-    leaf.rotation.y = -0.85;
+    leaf.rotation.y = -0.28;
     g.add(leaf);
-    box(leaf, width / 2, 1.1, 0, width - 0.05, 2.2, 0.045, wood);
-    box(leaf, width - 0.14, 1.04, 0.05, 0.1, 0.035, 0.03, black);
+    box(leaf, width / 2, 1.1, 0, width - 0.07, 2.2, 0.055, wood, 0.012);
+    box(leaf, width - 0.16, 1.04, 0.065, 0.09, 0.04, 0.035, black, 0.01);
+    box(
+      leaf,
+      width / 2,
+      1.32,
+      -0.035,
+      width * 0.58,
+      1.42,
+      0.012,
+      mat('#d9b984'),
+      0.008,
+    );
+  }
+  function doubleDoor(
+    p: T.Group,
+    x: number,
+    z: number,
+    width: number,
+    rot = 0,
+  ) {
+    const g = new T.Group();
+    g.position.set(x, 0, z);
+    g.rotation.y = rot;
+    g.userData.section = true;
+    box(g, -width / 2, 1.15, 0, 0.07, 2.3, 0.13, wood);
+    box(g, width / 2, 1.15, 0, 0.07, 2.3, 0.13, wood);
+    box(g, 0, 2.28, 0, width, 0.07, 0.13, wood);
+    for (const side of [-1, 1]) {
+      const leaf = new T.Group();
+      leaf.position.x = side * 0.025;
+      leaf.rotation.y = side * 0.12;
+      g.add(leaf);
+      const leafWidth = width / 2 - 0.07;
+      box(
+        leaf,
+        side * (leafWidth / 2),
+        1.1,
+        0,
+        leafWidth,
+        2.2,
+        0.045,
+        glass,
+        0.01,
+      );
+      box(leaf, side * (leafWidth / 2), 1.1, -0.035, 0.035, 2.16, 0.07, black);
+      box(leaf, side * (leafWidth / 2), 1.1, 0, leafWidth, 0.035, 0.07, black);
+      box(leaf, side * 0.12, 1.08, -0.065, 0.035, 0.07, 0.035, black, 0.01);
+    }
   }
   function windowPanel(p: T.Group, x: number, z: number, w: number, rot = 0) {
     const g = new T.Group();
@@ -656,8 +703,7 @@ export function createViewer(
       if (i === 0) {
         wall(walls, 0, SITE.houseDepth, 0.98, SITE.houseDepth);
         wall(walls, 3.78, SITE.houseDepth, SITE.width, SITE.houseDepth);
-        door(walls, 1.68, SITE.houseDepth, 1.4);
-        door(walls, 3.08, SITE.houseDepth, 1.4);
+        doubleDoor(walls, 2.38, SITE.houseDepth, 2.8);
       } else {
         for (const [a, b] of [
           [0, 0.5],
