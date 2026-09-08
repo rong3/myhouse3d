@@ -10,8 +10,8 @@ import { sampleTour } from './journey';
 import { registerViewerTool } from './webmcp';
 const plans=['tret','lau1','lau2','mai'],names=['Tầng trệt','Lầu 1','Lầu 2','Mái BTCT'];
 export default function Home(){
- const mount=useRef<HTMLDivElement>(null),api=useRef<Viewer|null>(null),modeRef=useRef('tour'),progressRef=useRef(0),playingRef=useRef(false);
- const [mode,setMode]=useState('tour'),[progress,setProgress]=useState(0),[playing,setPlaying]=useState(false),[cut,setCut]=useState(true),[plan,setPlan]=useState(false),[planFloor,setPlanFloor]=useState(0),[settings,setSettings]=useState(false),[ready,setReady]=useState(false),[error,setError]=useState('');
+ const mount=useRef<HTMLDivElement>(null),api=useRef<Viewer|null>(null),modeRef=useRef('free'),progressRef=useRef(0),playingRef=useRef(false);
+ const [mode,setMode]=useState('free'),[progress,setProgress]=useState(0),[playing,setPlaying]=useState(false),[cut,setCut]=useState(true),[plan,setPlan]=useState(false),[planFloor,setPlanFloor]=useState(0),[settings,setSettings]=useState(false),[ready,setReady]=useState(false),[error,setError]=useState('');
  const [immersive,setImmersive]=useState(false),[screenNote,setScreenNote]=useState('');
  useEffect(()=>{const sync=()=>{if(!document.fullscreenElement)setImmersive(false)};document.addEventListener('fullscreenchange',sync);return()=>document.removeEventListener('fullscreenchange',sync)},[]);
  async function toggleFullscreen(){
@@ -22,7 +22,7 @@ export default function Home(){
  function seek(p:number){const next=Math.max(0,Math.min(1,p));progressRef.current=next;setProgress(next);api.current?.seek(next);}
  function changeMode(m:string){modeRef.current=m;setMode(m);playingRef.current=false;setPlaying(false);api.current?.setMode(m);}
  function play(){if(progressRef.current>=.998)seek(0);changeMode('tour');playingRef.current=!playing;setPlaying(!playing);}
- useEffect(()=>{if(!mount.current)return;let v:Viewer|undefined;try{v=createViewer(mount.current,()=>{});api.current=v;setReady(true)}catch(e){console.error(e);setError('Trình duyệt chưa mở được 3D. Hãy bật tăng tốc đồ họa rồi tải lại trang.')}return()=>v?.dispose()},[]);
+ useEffect(()=>{if(!mount.current)return;let v:Viewer|undefined;try{v=createViewer(mount.current,()=>{});api.current=v;v.setMode('free');setReady(true)}catch(e){console.error(e);setError('Trình duyệt chưa mở được 3D. Hãy bật tăng tốc đồ họa rồi tải lại trang.')}return()=>v?.dispose()},[]);
  useEffect(()=>{api.current?.setSection(cut)},[cut,ready]);
  useEffect(()=>{const host=mount.current;if(!host)return;let last=0,id=0,startY=0,startP=0,dragging=false;
  const wheel=(e:WheelEvent)=>{if(modeRef.current!=='tour'||plan||settings)return;e.preventDefault();playingRef.current=false;setPlaying(false);seek(progressRef.current+Math.max(-160,Math.min(160,e.deltaY*(e.deltaMode===1?16:1)))*.00013)};
