@@ -32,3 +32,5 @@ export const yardOutline: number[][] = [
   [0, boundaryZ(0)],
 ];
 export const houseArea = SITE.width * SITE.houseDepth;
+// Convert original room coordinates to the entrance-first orientation on every floor.
+export const interiorZ = (planZ: number) => SITE.houseDepth - planZ;

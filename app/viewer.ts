@@ -4,6 +4,7 @@ import {
   frontZ,
   gateZ,
   boundaryZ,
+  interiorZ,
   houseOutline,
   upperOutline,
   yardOutline,
@@ -221,10 +222,10 @@ export function createViewer(
     s.closePath();
     if (hole) {
       const path = new T.Path();
-      path.moveTo(2.43, -5);
-      path.lineTo(2.43, -8.1);
-      path.lineTo(4.56, -8.1);
-      path.lineTo(4.56, -5);
+      path.moveTo(2.43, -interiorZ(5));
+      path.lineTo(2.43, -interiorZ(8.1));
+      path.lineTo(4.56, -interiorZ(8.1));
+      path.lineTo(4.56, -interiorZ(5));
       path.closePath();
       s.holes.push(path);
     }
@@ -581,12 +582,17 @@ export function createViewer(
     const g = new T.Group(),
       walls = new T.Group(),
       furn = new T.Group(),
-      labels = new T.Group();
+      labels = new T.Group(),
+      interior = new T.Group(),
+      internalWalls = new T.Group();
     groups.push(g);
     wallGroups.push(walls);
     furnGroups.push(furn);
     labelGroups.push(labels);
-    g.add(walls, furn, labels);
+    g.add(walls, interior, labels);
+    interior.position.z = SITE.houseDepth;
+    interior.scale.z = -1;
+    interior.add(furn, internalWalls);
     scene.add(g);
     if (i < 3)
       poly(
@@ -601,10 +607,10 @@ export function createViewer(
       poly(
         g,
         [
-          [1.26, 2.84],
-          [4.76, 2.84],
-          [4.76, 8.34],
-          [1.26, 8.34],
+          [1.26, interiorZ(2.84)],
+          [4.76, interiorZ(2.84)],
+          [4.76, interiorZ(8.34)],
+          [1.26, interiorZ(8.34)],
         ],
         0,
         0.2,
@@ -615,17 +621,24 @@ export function createViewer(
       wall(walls, 0, 0, 0, SITE.houseDepth);
       wall(walls, 4.76, 0, 4.76, SITE.houseDepth);
       const angle = 0;
-      // Straight house facade and balcony face the courtyard.
-      for (const [a, b] of [
-        [0, 0.5],
-        [1.95, 2.22],
-        [3.14, 4.76],
-      ])
-        wall(walls, a, frontZ(a), b, frontZ(b));
-      windowPanel(walls, 1.225, frontZ(1.225), 1.51, angle);
-      const below = wall(walls, 0.5, frontZ(0.5), 1.95, frontZ(1.95), 0.79);
-      below.userData.section = true;
-      door(walls, 2.68, frontZ(2.68), 0.96, angle);
+
+      // A broad main doorway leads directly to the living room.
+      if (i === 0) {
+        wall(walls, 0, SITE.houseDepth, 0.98, SITE.houseDepth);
+        wall(walls, 3.78, SITE.houseDepth, SITE.width, SITE.houseDepth);
+        door(walls, 1.68, SITE.houseDepth, 1.4);
+        door(walls, 3.08, SITE.houseDepth, 1.4);
+      } else {
+        for (const [a, b] of [
+          [0, 0.5],
+          [1.95, 2.22],
+          [3.14, 4.76],
+        ])
+          wall(walls, a, SITE.houseDepth, b, SITE.houseDepth);
+        windowPanel(walls, 1.225, SITE.houseDepth, 1.45, 0);
+        wall(walls, 0.5, SITE.houseDepth, 1.95, SITE.houseDepth, 0.79);
+        door(walls, 2.68, SITE.houseDepth, 0.96);
+      }
       const lintel = box(
         walls,
         2.38,
@@ -638,16 +651,18 @@ export function createViewer(
       );
       lintel.rotation.y = angle;
       lintel.userData.section = true;
-      wall(walls, 0, 0, 0.98, 0);
-      wall(walls, 3.78, 0, 4.76, 0);
+
       if (i === 0) {
-        // D1 at the straight rear frontage retains an operable escape door.
-        door(walls, 1.445, 0, 0.93);
-        windowPanel(walls, 2.845, 0, 1.87);
-        box(walls, 2.845, 0.37, 0, 1.87, 0.74, 0.16, cream).userData.section =
-          true;
-        box(g, 2.38, -0.12, -0.22, 2.8, 0.18, 0.44, stone);
+        wall(walls, 0, 0, 0.5, 0);
+        wall(walls, 1.95, 0, 2.22, 0);
+        wall(walls, 3.14, 0, 4.76, 0);
+        windowPanel(walls, 1.225, 0, 1.45);
+        wall(walls, 0.5, 0, 1.95, 0, 0.79);
+        door(walls, 2.68, 0, 0.96);
+        box(g, 2.68, -0.12, -0.22, 1.1, 0.18, 0.44, stone);
       } else {
+        wall(walls, 0, 0, 0.98, 0);
+        wall(walls, 3.78, 0, 4.76, 0);
         windowPanel(walls, 2.38, 0, 2.8);
         box(walls, 2.38, 0.37, 0, 2.8, 0.74, 0.16, cream).userData.section =
           true;
@@ -710,12 +725,12 @@ export function createViewer(
       chair(furn, 1.03, 5.55, Math.PI);
       chair(furn, 1.03, 7.45);
       cyl(furn, 1.03, 0.88, 6.5, 0.08, 0.18, mat('#7c8d7a'));
-      stairs(g);
-      wall(walls, 3.16, 8.34, 4.76, 8.34);
-      wall(walls, 3.16, 8.34, 3.16, 9.9);
-      wall(walls, 3.16, 10.8, 3.16, SITE.houseDepth);
-      door(walls, 3.16, 10.35, 0.9, Math.PI / 2);
-      wall(walls, 3.16, 9.95, 4.76, 9.95);
+      stairs(interior);
+      wall(internalWalls, 3.16, 8.34, 4.76, 8.34);
+      wall(internalWalls, 3.16, 8.34, 3.16, 9.9);
+      wall(internalWalls, 3.16, 10.8, 3.16, SITE.houseDepth);
+      door(internalWalls, 3.16, 10.35, 0.9, Math.PI / 2);
+      wall(internalWalls, 3.16, 9.95, 4.76, 9.95);
       box(furn, 0.46, 0.45, 10.3, 0.67, 0.87, 2.1, wood, 0.02);
       box(furn, 0.46, 0.92, 10.3, 0.73, 0.065, 2.15, white);
       for (let k = 0; k < 4; k++) {
@@ -758,14 +773,14 @@ export function createViewer(
     }
     if (i === 1) {
       for (const z of [4.84, 8.34]) {
-        wall(walls, 0, z, 1.4, z);
-        wall(walls, 2.3, z, 4.76, z);
-        door(walls, 1.85, z, 0.9);
+        wall(internalWalls, 0, z, 1.4, z);
+        wall(internalWalls, 2.3, z, 4.76, z);
+        door(internalWalls, 1.85, z, 0.9);
       }
-      wall(walls, 0, 5.84, 0.35, 5.84);
-      wall(walls, 1.15, 5.84, 1.5, 5.84);
-      door(walls, 0.75, 5.84, 0.8);
-      wall(walls, 1.5, 5.84, 1.5, 8.34);
+      wall(internalWalls, 0, 5.84, 0.35, 5.84);
+      wall(internalWalls, 1.15, 5.84, 1.5, 5.84);
+      door(internalWalls, 0.75, 5.84, 0.8);
+      wall(internalWalls, 1.5, 5.84, 1.5, 8.34);
       bed(furn, 2.25, '#8eaaa1');
       bed(furn, 10.47, '#be936d');
       wardrobe(furn, 3.48, 4.4, 1.95, 0.52);
@@ -777,24 +792,24 @@ export function createViewer(
       toilet(furn, 0.78, 7.88);
       sink(furn, 0.57, 6.32);
       box(furn, 0.77, 0.014, 7.1, 1.25, 0.02, 2.25, mat('#beced0'));
-      stairs(g);
+      stairs(interior);
     }
     if (i === 2) {
-      wall(walls, 1.26, 2.84, 2.66, 2.84, 3.11);
-      wall(walls, 3.86, 2.84, 4.76, 2.84, 3.11);
-      door(walls, 3.26, 2.84, 1.2);
-      wall(walls, 1.26, 2.84, 1.26, 8.34);
-      wall(walls, 4.76, 2.84, 4.76, 8.34);
-      wall(walls, 1.26, 8.34, 1.5, 8.34);
-      wall(walls, 2.4, 8.34, 4.76, 8.34);
-      door(walls, 1.95, 8.34, 0.9);
-      wall(walls, 1.26, 4.84, 2.45, 4.84);
+      wall(internalWalls, 1.26, 2.84, 2.66, 2.84, 3.11);
+      wall(internalWalls, 3.86, 2.84, 4.76, 2.84, 3.11);
+      door(internalWalls, 3.26, 2.84, 1.2);
+      wall(internalWalls, 1.26, 2.84, 1.26, 8.34);
+      wall(internalWalls, 4.76, 2.84, 4.76, 8.34);
+      wall(internalWalls, 1.26, 8.34, 1.5, 8.34);
+      wall(internalWalls, 2.4, 8.34, 4.76, 8.34);
+      door(internalWalls, 1.95, 8.34, 0.9);
+      wall(internalWalls, 1.26, 4.84, 2.45, 4.84);
       railing(g, 0.03, 0.03, 4.73, 0.03);
       railing(g, 0.03, 0.03, 0.03, frontZ(0.03) + 1.17);
       railing(g, 0.03, frontZ(0.03) + 1.17, 4.73, frontZ(4.73) + 1.17);
-      railing(g, 4.73, frontZ(4.73) + 1.17, 4.73, 8.34);
-      railing(g, 4.73, 0.03, 4.73, 2.84);
-      stairs(g, false);
+      railing(g, 4.73, frontZ(4.73) + 1.17, 4.73, interiorZ(2.84));
+      railing(g, 4.73, 0.03, 4.73, interiorZ(8.34));
+      stairs(interior, false);
       box(furn, 4.18, 0.53, 3.85, 0.75, 1.04, 1.46, darkwood, 0.025);
       box(furn, 4.18, 1.09, 3.85, 0.85, 0.1, 1.6, darkwood);
       box(furn, 4.56, 1.55, 3.85, 0.035, 2.35, 1.8, wood);
@@ -809,7 +824,7 @@ export function createViewer(
       plant(furn, 0.43, 0.55, 1.15);
       plant(furn, 4.24, 0.55, 1.1);
       plant(furn, 0.4, 10.9, 1.5);
-      plant(furn, 4.2, 12.5, 1.6);
+      plant(furn, 4.2, SITE.houseDepth - 0.55, 1.2);
       table(furn, 3.05, 1.42, 0.8, 0.65);
       chair(furn, 2.3, 1.42, -Math.PI / 2);
       chair(furn, 3.8, 1.42, Math.PI / 2);
@@ -856,11 +871,17 @@ export function createViewer(
           [1.26, 2.84],
         ],
       ] as number[][][])
-        wall(walls, a[0], a[1], b[0], b[1], 0.25, 0.12, mat('#aebcbd'));
+        wall(internalWalls, a[0], a[1], b[0], b[1], 0.25, 0.12, mat('#aebcbd'));
       for (let x = 1.6; x < 4.7; x += 0.4)
-        line(g, [x, 0.011, 2.98], [x, 0.011, 8.2], 0.006, mat('#8fa1a2'));
+        line(
+          interior,
+          [x, 0.011, 2.98],
+          [x, 0.011, 8.2],
+          0.006,
+          mat('#8fa1a2'),
+        );
       for (let z = 3.2; z < 8.2; z += 0.4)
-        line(g, [1.4, 0.012, z], [4.6, 0.012, z], 0.006, mat('#8fa1a2'));
+        line(interior, [1.4, 0.012, z], [4.6, 0.012, z], 0.006, mat('#8fa1a2'));
     }
   }
 
@@ -985,7 +1006,7 @@ export function createViewer(
   // The open strip in front of the rear door remains unobstructed.
   const rearLanding = box(
     scene,
-    1.445,
+    2.68,
     -0.14,
     -0.43,
     1.12,

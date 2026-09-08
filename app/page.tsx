@@ -488,14 +488,15 @@ export default function Home() {
             </div>
           </dl>
           <p>
-            Nhà chữ nhật 4,76 × 12,61 m, khoảng 60 m². Giữ bố trí phòng khách
-            phía sau, bàn ăn cạnh thang, bếp và WC phía sân. Tường, sàn, bếp và
-            ban công đều thẳng, vuông góc.
+            Nhà chữ nhật 4,76 × 12,61 m, khoảng 60 m². Từ sân vào là phòng
+            khách, tiếp đến bàn ăn và cầu thang, cuối nhà là bếp, khu vệ sinh và
+            cửa thoát hiểm phía sau. Các tầng trên cùng chiều vào nhà.
           </p>
           <p>
             Chỉ ranh đất phía cổng bị xéo; sân nằm giữa ranh này và mặt nhà
             thẳng. Ban công sâu 1,20 m hướng ra sân. Cửa phía sau thông ra mặt
-            tiền thứ hai.
+            tiền thứ hai. Lầu 1 có phòng ngủ 01 phía ban công, phòng ngủ 02 phía
+            sau. Phòng thờ và khối mái được đảo cùng chiều với lõi thang.
           </p>
           <p className="proposal-note">
             Chiều dài nhà, sân 56 m² và độ xéo ranh đất là số ước lượng theo yêu
