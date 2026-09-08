@@ -43,7 +43,7 @@ export function createViewer(host:HTMLElement,_onSelect:(id:string)=>void):Viewe
  function ball(p:T.Object3D,x:number,y:number,z:number,r:number,m:T.Material,sx=1,sy=1,sz=1){const mesh=new T.Mesh(new T.SphereGeometry(r,16,12),m);mesh.position.set(x,y,z);mesh.scale.set(sx,sy,sz);mesh.castShadow=true;p.add(mesh);return mesh;}
  function line(p:T.Object3D,a:number[],b:number[],r=.018,m:T.Material=black){const av=new T.Vector3(...a),bv=new T.Vector3(...b),dir=bv.clone().sub(av);const o=new T.Mesh(new T.CylinderGeometry(r,r,dir.length(),8),m);o.position.copy(av.add(bv).multiplyScalar(.5));o.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),dir.normalize());p.add(o);return o;}
  function poly(p:T.Object3D,points:number[][],y:number,depth:number,m:T.Material,hole=false){const s=new T.Shape();points.forEach(([x,z],i)=>i?s.lineTo(x,-z):s.moveTo(x,-z));s.closePath();if(hole){const path=new T.Path();path.moveTo(2.43,-5);path.lineTo(2.43,-8.1);path.lineTo(4.56,-8.1);path.lineTo(4.56,-5);path.closePath();s.holes.push(path)}const geo=new T.ExtrudeGeometry(s,{depth,bevelEnabled:false});geo.rotateX(-Math.PI/2);const o=new T.Mesh(geo,m);o.position.y=y-depth;o.receiveShadow=true;o.castShadow=true;p.add(o);return o;}
- const base=box(scene,2.38,-.36,5.6,6.5,.2,15.9,mat('#e0ddd5'),.12);
+ const base=box(scene,2.38,-.36,3.8,6.5,.2,19.5,mat('#e0ddd5'),.12);
  const ground=new T.Mesh(new T.PlaneGeometry(200,200),mat('#f0efeb'));ground.rotation.x=-Math.PI/2;ground.position.y=-.5;ground.receiveShadow=true;scene.add(ground);
  const groups:T.Group[]=[],wallGroups:T.Group[]=[],furnGroups:T.Group[]=[],labelGroups:T.Group[]=[];
  const outline=[[0,0],[4.76,0],[4.76,13.25],[0,11.84]];
@@ -106,8 +106,37 @@ export function createViewer(host:HTMLElement,_onSelect:(id:string)=>void):Viewe
    o.children.forEach(ch=>cutObject(ch,section));
   }cutObject(g);
  });
- // A quieter paving grid at the entry establishes scale.
- for(let x=-.65;x<5.6;x+=.6)line(scene,[x,-.245,-2.35],[x,-.245,-.7],.004,mat('#c9c5bc'));
+ // Forecourt proposal: the reference sheets do not provide a site boundary.
+ const yard=new T.Group();scene.add(yard);
+ const paving=mat('#d6d3c8'),fence=mat('#545e52'),soil=mat('#5f6450'),lawn=mat('#81916b');
+ box(yard,2.38,-.18,-2.65,4.76,.16,4.1,paving);
+ for(let z=-4.5;z<-.8;z+=.55)line(yard,[.75,-.094,z],[4.01,-.094,z],.007,mat('#b6b9ad'));
+ for(let x=.75;x<=4.01;x+=.81)line(yard,[x,-.093,-4.5],[x,-.093,-.8],.005,mat('#b6b9ad'));
+ for(const x of [.34,4.42]){
+  box(yard,x,.04,-2.6,.57,.25,2.9,cream,.025);box(yard,x,.18,-2.6,.46,.04,2.78,soil);box(yard,x,.205,-2.6,.43,.018,2.75,lawn);
+  for(let i=0;i<7;i++)ball(yard,x,.34,-3.72+i*.36,.18,green,1,.65,1.2);
+  box(yard,x,.36,-1.08,.57,.58,.62,cream,.025);plant(yard,x,-1.08,1.3);
+ }
+ for(const x of [.03,4.73]){
+  box(yard,x,.45,-2.55,.14,1.15,3.9,cream);box(yard,x,1.035,-2.55,.19,.06,3.93,paving);
+  for(const z of [-4.57,-.75]){box(yard,x,.91,z,.24,2.12,.24,cream);box(yard,x,1.99,z,.31,.075,.31,paving)}
+ }
+ // Gate opening aligns with the 2.80m entrance, with a restrained vertical rhythm.
+ for(const x of [.88,3.88]){box(yard,x,.94,-4.57,.24,2.18,.3,cream);box(yard,x,2.04,-4.57,.3,.075,.36,paving);box(yard,x,1.55,-4.738,.09,.21,.035,black);box(yard,x,1.53,-4.76,.05,.14,.018,mat('#f7d9a1'))}
+ for(const x of [.43,4.33]){box(yard,x,.66,-4.57,.64,1.62,.12,cream);box(yard,x,1.49,-4.57,.7,.055,.16,paving)}
+ box(yard,4.3,1.07,-4.65,.38,.24,.055,fence,.025);box(yard,4.3,1.09,-4.689,.24,.017,.01,black);
+ const gateLeaves:T.Group[]=[];
+ for(let side=0;side<2;side++){const g=new T.Group();g.position.set(side===0?1:3.76,0,-4.57);yard.add(g);gateLeaves.push(g);const sign=side===0?1:-1;
+  for(const y of [.1,1.82])box(g,sign*.685,y,0,1.37,.06,.065,fence);
+  for(let j=0;j<=13;j++)box(g,sign*(.025+j*.101),.96,0,.04,1.72,.05,fence);
+  box(g,sign*1.24,.96,-.065,.026,.33,.04,wood);
+ }
+ // A shallow drain at the gate and a generous step at the entrance.
+ box(yard,2.38,-.083,-4.33,2.76,.02,.1,black);for(let i=0;i<32;i++)box(yard,1.03+i*.087,-.069,-4.33,.016,.01,.095,paving);
+ box(yard,2.38,-.11,-.72,3.1,.12,.38,paving,.02);
+ // Quiet balcony planters and aligned facade reveals.
+ for(const i of [1,2]){const g=groups[i];box(g,3.65,.16,-.88,1.05,.32,.4,cream,.025);box(g,3.65,.335,-.88,.94,.025,.31,soil);for(let j=0;j<6;j++)ball(g,3.23+j*.165,.43,-.88,.14,green,1,.8,1);}
+ for(const g of groups.slice(0,2)){for(const z of [1.6,4.7,8.25,11.4])box(g,4.846,1.74,z,.012,3.18,.035,mat('#d7d3c8'));}
  let mode='tour',progress=0,section=true;
  let tween:{pos:T.Vector3;target:T.Vector3}|null=null;
  const desiredEye=new T.Vector3(),desiredLook=new T.Vector3();
@@ -119,13 +148,14 @@ export function createViewer(host:HTMLElement,_onSelect:(id:string)=>void):Viewe
  function setSection(on:boolean){section=on;sideCuts.forEach((p,i)=>p.constant=on?levels[i]+.24:40)}
  function setMode(m:string){mode=m==='free'?'free':'tour';controls.enabled=mode==='free';controls.autoRotate=false;if(mode==='tour')refreshTour();else{camera.clearViewOffset();upperCut.constant=20;view('iso')}}
  function seek(p:number){progress=T.MathUtils.clamp(Number.isFinite(p)?p:0,0,1);if(mode==='tour')refreshTour()}
- function view(v:string){const center=new T.Vector3(2.1,4.4,5.2),k=camera.aspect<.85?1.4:1;const pos=v==='top'?new T.Vector3(2.38,31*k,5.19):new T.Vector3(2.1-15*k,4.4+10*k,5.2-23*k);tween={pos,target:center};}
+ function view(v:string){const center=new T.Vector3(2.1,4.1,3.8),k=camera.aspect<.85?1.4:1;const pos=v==='top'?new T.Vector3(2.38,31*k,5.19):new T.Vector3(2.1-15*k,4.4+10*k,3.8-25*k);tween={pos,target:center};}
  function down(){if(mode==='free')tween=null}
  renderer.domElement.addEventListener('pointerdown',down);
  const resize=new ResizeObserver(()=>{const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);if(mode==='tour')refreshTour()});resize.observe(host);
  camera.position.set(-13,12,-17);controls.target.set(2.1,4.4,5.2);camera.lookAt(controls.target);setSection(true);seek(0);let frame=0,disposed=false,lastTime=0;
  function animate(time=0){if(disposed)return;frame=requestAnimationFrame(animate);const dt=Math.min(.05,(time-lastTime)/1000);lastTime=time;
   if(tween){const ease=1-Math.exp(-dt*7);camera.position.lerp(tween.pos,ease);controls.target.lerp(tween.target,ease);if(camera.position.distanceTo(tween.pos)<.004&&controls.target.distanceTo(tween.target)<.004)tween=null}
+  const gateAngle=mode==='tour'?T.MathUtils.smoothstep(progress,.10,.17)*1.4:.35;gateLeaves[0].rotation.y=T.MathUtils.damp(gateLeaves[0].rotation.y,-gateAngle,7,dt);gateLeaves[1].rotation.y=T.MathUtils.damp(gateLeaves[1].rotation.y,gateAngle,7,dt);
   if(mode==='free')controls.update();else camera.lookAt(controls.target);renderer.render(scene,camera);
  }animate();
  return {seek,setMode,setSection,view,zoom(f){tween=null;camera.position.sub(controls.target).multiplyScalar(f).add(controls.target);controls.update()},dispose(){disposed=true;cancelAnimationFrame(frame);resize.disconnect();controls.dispose();renderer.domElement.removeEventListener('pointerdown',down);const geometries=new Set<T.BufferGeometry>(),materials=new Set<T.Material>(),textures=new Set<T.Texture>();scene.traverse(o=>{const m=o as T.Mesh;if(m.geometry)geometries.add(m.geometry);if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(x=>materials.add(x))});materials.forEach(m=>{const map=(m as T.MeshStandardMaterial).map;if(map)textures.add(map);m.dispose()});textures.forEach(t=>t.dispose());geometries.forEach(g=>g.dispose());environment.dispose();renderer.dispose();renderer.domElement.remove()}};
