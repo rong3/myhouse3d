@@ -1,45 +1,46 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { Box, Layers3, RotateCcw, ZoomIn, ZoomOut, MoveUpRight, Scan, FileImage, X, ArrowUpRight, Mouse, Armchair, ChevronRight } from 'lucide-react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { registerViewerTool } from './webmcp';
+import { Box, ArrowDown, ArrowUpRight, Play, Pause, RotateCcw, Move3D, FileImage, X, SlidersHorizontal, Minus, Plus, House, Maximize2 } from 'lucide-react';
+import { Tabs,TabsList,TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { createViewer, rooms, type Viewer } from './viewer';
-const floors = [
- {name:'Tầng trệt',level:'±0.000',area:'60 m²',caption:'Sinh hoạt & sum họp',plan:'tret'},
- {name:'Lầu 1',level:'+3.600',area:'66 m²',caption:'Không gian nghỉ ngơi',plan:'lau1'},
- {name:'Lầu 2',level:'+7.200',area:'20 m²',caption:'Phòng thờ & sân thượng',plan:'lau2'},
- {name:'Mái BTCT',level:'+10.500',area:'20 m²',caption:'Mái che khối cầu thang',plan:'mai'}
-];
+import { Slider } from '@/components/ui/slider';
+import { Dialog,DialogContent,DialogTitle } from '@/components/ui/dialog';
+import { createViewer,type Viewer } from './viewer';
+import { sampleTour } from './journey';
+import { registerViewerTool } from './webmcp';
+const plans=['tret','lau1','lau2','mai'],names=['Tầng trệt','Lầu 1','Lầu 2','Mái BTCT'];
 export default function Home(){
- const mount=useRef<HTMLDivElement>(null), api=useRef<Viewer|null>(null);
- const [floor,setFloor]=useState(0),[mode,setMode]=useState('single'),[cut,setCut]=useState(true),[furniture,setFurniture]=useState(true),[labels,setLabels]=useState(true),[spin,setSpin]=useState(false),[plan,setPlan]=useState(false),[room,setRoom]=useState<string|null>(null),[error,setError]=useState(''),[ready,setReady]=useState(false);
- useEffect(()=>{if(!mount.current)return;let v:Viewer;try{v=createViewer(mount.current,(id)=>setRoom(id));api.current=v;setReady(true);}catch(e){setError('Không thể mở không gian 3D. Hãy bật tăng tốc đồ họa trong trình duyệt rồi tải lại trang.');console.error(e);}return()=>v?.dispose();},[]);
- useEffect(()=>{api.current?.update({floor,mode,cut,furniture,labels,spin});},[floor,mode,cut,furniture,labels,spin,ready]);
- useEffect(()=>{if(!plan)return;const close=(e:KeyboardEvent)=>{if(e.key==='Escape')setPlan(false)};window.addEventListener('keydown',close);return()=>window.removeEventListener('keydown',close);},[plan]);
- useEffect(()=>registerViewerTool((f,m)=>{setFloor(f);setMode(m);setRoom(null)}),[]);
- function selectFloor(n:number){setFloor(n);setRoom(null);}
- const selected=rooms.find(r=>r.id===room);
- return <main className="studio">
- <header className="topbar"><div className="brand"><span className="brand-icon"><Box size={23}/></span><div><b>NHÀ PHỐ <span>/ 3D</span></b><small>KHÔNG GIAN CỦA BẠN</small></div></div><div className="project-meta"><span className="live-dot"/> Mô hình theo bản vẽ <i/> Ngang 4,76 m</div><button className="outline-button" onClick={()=>setPlan(true)}><FileImage size={17}/><span>Bản vẽ gốc</span><ArrowUpRight size={16}/></button></header>
- <aside className="sidebar"><div className="section-kicker">KHÁM PHÁ NGÔI NHÀ</div><h1>Từng tầng.<br/>Từng không gian.</h1><p className="intro">Chọn tầng để khám phá bố trí và nội thất.</p>
- <nav className="floor-list" aria-label="Chọn tầng">{floors.map((f,i)=><button key={f.name} className={'floor-card '+(floor===i?'active':'')} onClick={()=>selectFloor(i)} aria-pressed={floor===i}><span className="floor-number">0{i}</span><span className="floor-copy"><strong>{f.name}</strong><small>{f.caption}</small></span><ChevronRight size={16}/></button>)}</nav>
- <div className="floor-stats"><div><small>Diện tích bản vẽ</small><b>{floors[floor].area}</b></div><div><small>Cao độ sàn</small><b>{floors[floor].level} <em>m</em></b></div></div>
- <div className="section-kicker room-heading">CÁC KHÔNG GIAN <span>{rooms.filter(r=>r.floor===floor).length}</span></div>
- <div className="room-list">{rooms.filter(r=>r.floor===floor).map(r=><button className={r.id===room?'selected':''} key={r.id} onClick={()=>{setRoom(r.id);api.current?.focusRoom(r.id);}}><span style={{background:r.color}}/>{r.name}<MoveUpRight size={14}/></button>)}</div>
- <div className="sidebar-note"><span>GHI CHÚ THIẾT KẾ</span><p>Bố trí theo 4 bản vẽ bạn cung cấp. Nội thất, vật liệu và chiều cao cửa là phương án minh họa; không thay thế hồ sơ thi công.</p></div>
- </aside>
- <section className="canvas-area" aria-label="Không gian nhà 3D"><div className="viewport" ref={mount} tabIndex={0} aria-label="Kéo để xoay, cuộn để thu phóng mô hình. Dùng các nút góc nhìn để điều khiển bằng bàn phím."/>
- <div className="view-top"><div><span className="section-kicker">{mode==='single'?'PHỐI CẢNH TỪNG TẦNG':mode==='explode'?'PHỐI CẢNH TÁCH TẦNG':'PHỐI CẢNH TOÀN NHÀ'}</span><h2>{mode==='single'?floors[floor].name:'Ngôi nhà của bạn'}</h2></div><Tabs value={mode} onValueChange={v=>{setMode(String(v));setRoom(null);}}><TabsList className="view-tabs"><TabsTrigger value="single"><Box size={15}/>Từng tầng</TabsTrigger><TabsTrigger value="explode"><Layers3 size={15}/>Tách tầng</TabsTrigger><TabsTrigger value="all">Toàn nhà</TabsTrigger></TabsList></Tabs></div>
- {!ready&&!error&&<div className="loading">Đang dựng không gian 3D…</div>}{error&&<div className="loading error">{error}<button onClick={()=>location.reload()}>Tải lại</button></div>}
- <div className="compass"><span>BẢN VẼ</span><b>↑</b><small>PHÍA SAU</small></div>
- <div className="view-tools"><button title="Góc phối cảnh" aria-label="Góc phối cảnh" onClick={()=>api.current?.view('iso')}><Box size={20}/></button><button title="Nhìn từ trên" aria-label="Nhìn từ trên" onClick={()=>api.current?.view('top')}><Scan size={20}/></button><button title="Mặt trước" aria-label="Mặt trước" onClick={()=>api.current?.view('front')}><Armchair size={20}/></button><div/><button title="Phóng to" aria-label="Phóng to" onClick={()=>api.current?.zoom(.8)}><ZoomIn size={20}/></button><button title="Thu nhỏ" aria-label="Thu nhỏ" onClick={()=>api.current?.zoom(1.25)}><ZoomOut size={20}/></button><button title="Đặt lại góc nhìn" aria-label="Đặt lại góc nhìn" onClick={()=>{setRoom(null);api.current?.view('iso');}}><RotateCcw size={19}/></button></div>
- {selected&&<div className="room-detail"><div><span style={{background:selected.color}}/>{selected.name}<button aria-label="Đóng thông tin phòng" onClick={()=>{setRoom(null);api.current?.clearSelection();}}><X size={16}/></button></div><p>{selected.description}</p></div>}
- <div className="bottom-panel"><div className="display-options"><label><Switch checked={cut} onCheckedChange={setCut} aria-label="Cắt thấp tường"/>Cắt thấp tường</label><label><Switch checked={furniture} onCheckedChange={setFurniture} aria-label="Hiện nội thất"/>Nội thất</label><label><Switch checked={labels} onCheckedChange={setLabels} aria-label="Hiện tên phòng"/>Tên phòng</label><label><Switch checked={spin} onCheckedChange={setSpin} aria-label="Tự xoay"/>Tự xoay</label></div><div className="gesture-help"><Mouse size={15}/><span>Kéo để xoay</span><i/><span>Cuộn để phóng to</span><i/><span>Chuột phải để di chuyển</span></div></div>
- <div className="scale-note">4,76 m <span>────────</span><small>Ngang nhà theo bản vẽ</small></div>
- </section>
- <Dialog open={plan} onOpenChange={setPlan}><DialogContent className="plan-dialog" showCloseButton={false}><header><div><small>ĐỐI CHIẾU BỐ TRÍ</small><DialogTitle>{floors[floor].name} · Bản vẽ gốc</DialogTitle></div><button autoFocus aria-label="Đóng bản vẽ" onClick={()=>setPlan(false)}><X/></button></header><div className="plan-image"><img src={'/plans/'+floors[floor].plan+'.jpg'} alt={'Bản vẽ '+floors[floor].name}/></div><footer>{floors.map((f,i)=><button className={floor===i?'chosen':''} onClick={()=>selectFloor(i)} key={f.name}>{f.name}</button>)}</footer></DialogContent></Dialog>
+ const mount=useRef<HTMLDivElement>(null),api=useRef<Viewer|null>(null),modeRef=useRef('tour'),progressRef=useRef(0),playingRef=useRef(false);
+ const [mode,setMode]=useState('tour'),[progress,setProgress]=useState(0),[playing,setPlaying]=useState(false),[cut,setCut]=useState(true),[plan,setPlan]=useState(false),[planFloor,setPlanFloor]=useState(0),[settings,setSettings]=useState(false),[ready,setReady]=useState(false),[error,setError]=useState('');
+ const frame=sampleTour(progress).frame;
+ function seek(p:number){const next=Math.max(0,Math.min(1,p));progressRef.current=next;setProgress(next);api.current?.seek(next);}
+ function changeMode(m:string){modeRef.current=m;setMode(m);playingRef.current=false;setPlaying(false);api.current?.setMode(m);}
+ function play(){if(progressRef.current>=.998)seek(0);changeMode('tour');playingRef.current=!playing;setPlaying(!playing);}
+ useEffect(()=>{if(!mount.current)return;let v:Viewer|undefined;try{v=createViewer(mount.current,()=>{});api.current=v;setReady(true)}catch(e){console.error(e);setError('Trình duyệt chưa mở được 3D. Hãy bật tăng tốc đồ họa rồi tải lại trang.')}return()=>v?.dispose()},[]);
+ useEffect(()=>{api.current?.setSection(cut)},[cut,ready]);
+ useEffect(()=>{const host=mount.current;if(!host)return;let last=0,id=0,startY=0,startP=0,dragging=false;
+ const wheel=(e:WheelEvent)=>{if(modeRef.current!=='tour'||plan||settings)return;e.preventDefault();playingRef.current=false;setPlaying(false);seek(progressRef.current+Math.max(-160,Math.min(160,e.deltaY*(e.deltaMode===1?16:1)))*.00013)};
+ const down=(e:PointerEvent)=>{if(modeRef.current==='tour'){startY=e.clientY;startP=progressRef.current;dragging=true;host.setPointerCapture(e.pointerId)}};
+ const move=(e:PointerEvent)=>{if(!dragging||modeRef.current!=='tour')return;playingRef.current=false;setPlaying(false);seek(startP+(startY-e.clientY)*.001)};
+ const up=()=>{dragging=false};
+ const key=(e:KeyboardEvent)=>{if(modeRef.current!=='tour')return;if(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End'].includes(e.key)){e.preventDefault();playingRef.current=false;setPlaying(false);seek(e.key==='Home'?0:e.key==='End'?1:progressRef.current+(e.key==='ArrowDown'?.018:e.key==='ArrowUp'?-.018:e.key==='PageDown'?.1:-.1))}};
+ const tick=(t:number)=>{const dt=Math.min(.08,(t-last)/1000);last=t;if(playingRef.current&&modeRef.current==='tour'&&!document.hidden&&!plan&&!settings){seek(progressRef.current+dt*.009);if(progressRef.current>=1){playingRef.current=false;setPlaying(false)}}id=requestAnimationFrame(tick)};id=requestAnimationFrame(tick);
+ host.addEventListener('wheel',wheel,{passive:false});host.addEventListener('pointerdown',down);host.addEventListener('pointermove',move);host.addEventListener('pointerup',up);host.addEventListener('pointercancel',up);host.addEventListener('keydown',key);
+ return()=>{cancelAnimationFrame(id);host.removeEventListener('wheel',wheel);host.removeEventListener('pointerdown',down);host.removeEventListener('pointermove',move);host.removeEventListener('pointerup',up);host.removeEventListener('pointercancel',up);host.removeEventListener('keydown',key)};
+ },[plan,settings]);
+ useEffect(()=>registerViewerTool((p,m)=>{changeMode(m);seek(p)}),[]);
+ return <main className="experience">
+ <div ref={mount} className="world" tabIndex={0} aria-label="Mô hình nhà 3D. Cuộn hoặc dùng phím mũi tên để tham quan. Chế độ Tự do cho phép kéo xoay và thu phóng."/>
+ <header className="masthead"><a className="wordmark" href="#" onClick={e=>{e.preventDefault();changeMode('tour');seek(0)}}><span className="logo-box"><House size={21}/></span><strong>NHÀ PHỐ<span> / KHÔNG GIAN SỐ</span></strong></a><div className="top-actions"><button className="text-button" onClick={()=>{setPlanFloor(frame.floor);setPlan(true)}}><FileImage size={16}/><span>Bản vẽ gốc</span></button><button className="icon-button" aria-label="Tùy chọn hiển thị" onClick={()=>setSettings(true)}><SlidersHorizontal size={19}/></button></div></header>
+ <div className="mode-control"><Tabs value={mode} onValueChange={v=>changeMode(String(v))}><TabsList><TabsTrigger value="tour"><Play size={13}/>Tham quan</TabsTrigger><TabsTrigger value="free"><Move3D size={16}/>Tự do</TabsTrigger></TabsList></Tabs></div>
+ <section className={'story '+(progress>.13&&progress<.96&&mode==='tour'?'inside':'')} aria-live="polite"><div className="eyebrow"><span/> {mode==='tour'?'HÀNH TRÌNH KHÔNG GIAN':'KHÁM PHÁ TỰ DO'} <span className="chapter-count">0{frame.chapter+1} / 04</span></div><h1>{mode==='tour'?frame.title:'Ngôi nhà trong một góc nhìn.'}</h1><p>{mode==='tour'?frame.description:'Kéo để xoay, cuộn để phóng to. Bật mặt cắt để nhìn xuyên vào các không gian bên trong.'}</p>{progress<.12&&mode==='tour'&&<button className="start-tour" onClick={play}>{playing?<Pause size={15}/>:<Play size={15}/>} {playing?'Tạm dừng':'Tự động tham quan'}<ArrowUpRight size={17}/></button>}</section>
+ <div className="house-caption"><span>01 — NHÀ PHỐ</span><b>4,76 <small>m</small></b><p>Ngang nhà · 2 phòng ngủ<br/>Trệt + 2 lầu + mái</p></div>
+ <div className="section-control"><label><Switch checked={cut} onCheckedChange={setCut} aria-label="Mở mặt cắt ngôi nhà"/><span>Mở mặt cắt</span></label><small>{cut?'Nhìn rõ bên trong':'Xem mặt ngoài'}</small></div>
+ {mode==='free'&&<div className="orbit-tools"><button aria-label="Toàn cảnh ngôi nhà" onClick={()=>api.current?.view('iso')}><House size={19}/></button><button aria-label="Nhìn từ trên" onClick={()=>api.current?.view('top')}><Maximize2 size={19}/></button><button aria-label="Phóng to" onClick={()=>api.current?.zoom(.8)}><Plus size={19}/></button><button aria-label="Thu nhỏ" onClick={()=>api.current?.zoom(1.25)}><Minus size={19}/></button></div>}
+ <footer className="tour-dock"><div className="dock-top"><button className="play-button" aria-label={playing?'Tạm dừng tham quan':'Phát hành trình'} onClick={play}>{playing?<Pause size={17}/>:<Play size={17}/>}</button><div className="journey-line"><div className="journey-meta"><span>{mode==='tour'?'CUỘN ĐỂ KHÁM PHÁ':'QUAY LẠI THAM QUAN BẤT CỨ LÚC NÀO'}</span><b>{Math.round(progress*100)}%</b></div><Slider value={[progress*100]} min={0} max={100} step={.1} aria-label="Tiến trình tham quan" onValueChange={v=>{changeMode('tour');seek((Array.isArray(v)?v[0]:v)/100)}}/></div><button className="reset-button" aria-label="Trở về đầu hành trình" onClick={()=>{changeMode('tour');seek(0)}}><RotateCcw size={18}/></button></div><div className="journey-stages">{['Toàn cảnh','Không gian chung','Không gian riêng','Sân thượng'].map((n,i)=><span className={frame.chapter===i?'current':''} key={n}><i/>{n}</span>)}</div></footer>
+ <div className="scroll-hint"><ArrowDown size={14}/><span>{mode==='tour'?'Cuộn hoặc vuốt lên để đi tiếp':'Kéo xoay · Cuộn thu phóng'}</span></div><div className="design-note">Phối cảnh đề xuất theo bản vẽ · Nội thất & mặt đứng minh họa</div>
+ {!ready&&<div className="loading-state">{error||'Đang mở ngôi nhà…'}{error&&<button onClick={()=>location.reload()}>Thử lại</button>}</div>}
+ <Dialog open={settings} onOpenChange={setSettings}><DialogContent className="settings-dialog"><DialogTitle>Góc nhìn của bạn</DialogTitle><p>Ngôi nhà giữ nguyên các tầng ở đúng cao độ. Mặt cắt chỉ mở các vách gần góc nhìn.</p><label><span>Mở mặt cắt</span><Switch checked={cut} onCheckedChange={setCut}/></label><p className="settings-note">Cuộn / vuốt lên để đi vào nhà. Cuộn ngược để trở lại. Trong chế độ Tự do, kéo để xoay và dùng hai ngón tay để thu phóng.</p></DialogContent></Dialog>
+ <Dialog open={plan} onOpenChange={setPlan}><DialogContent className="plan-dialog" showCloseButton={false}><header><div><small>ĐỐI CHIẾU BỐ TRÍ</small><DialogTitle>{names[planFloor]} · Bản vẽ gốc</DialogTitle></div><button aria-label="Đóng bản vẽ" onClick={()=>setPlan(false)}><X/></button></header><div className="plan-image"><img src={'/plans/'+plans[planFloor]+'.jpg'} alt={'Bản vẽ '+names[planFloor]}/></div><footer>{names.map((n,i)=><button className={i===planFloor?'chosen':''} onClick={()=>setPlanFloor(i)} key={n}>{n}</button>)}</footer></DialogContent></Dialog>
  </main>;
 }
-
