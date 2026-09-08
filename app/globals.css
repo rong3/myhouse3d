@@ -15,6 +15,13 @@
 @media(max-width:760px){.story p{font-size:13px;line-height:1.6}.story.inside p{font-size:13px;line-height:1.55}.story.inside{max-width:240px}.story.inside h1{font-size:24px}.text-button,.start-tour,.section-control label{font-size:12px}.mode-control [data-slot=tabs-trigger]{font-size:12px}.journey-stages span{font-size:9px}.eyebrow{font-size:9px}.story.inside .eyebrow{font-size:9px}.story{top:128px}.story.inside{top:auto}.section-control small{display:none}}
 .mode-control [data-slot='tabs-trigger']{flex:0 0 auto;min-width:108px;white-space:nowrap;justify-content:center}
 @media(max-width:760px){.mode-control [data-slot='tabs-list']{width:max-content}.mode-control [data-slot='tabs-trigger']{min-width:96px}}
+.mode-control [data-slot='tabs-trigger']{white-space:nowrap}
+@media(max-width:760px){
+  .story,.house-caption,.scroll-hint,.design-note{display:none!important}
+  .section-control{bottom:24px;right:18px}
+  .journey-quiet-control{right:18px;bottom:76px}
+  .mode-control{top:78px}
+}
 .fullscreen-button{white-space:nowrap}.experience.immersive .story,.experience.immersive .house-caption,.experience.immersive .design-note{display:none}.experience.immersive .masthead{background:none}.experience.immersive .tour-dock{bottom:25px;opacity:.86}.experience.immersive .tour-dock:hover{opacity:1}.experience.immersive .scroll-hint{display:none}.experience.immersive .section-control{bottom:165px}.experience:fullscreen{width:100vw;height:100dvh}.screen-note{position:absolute;top:110px;right:25px;max-width:300px;background:#fffef5ec;padding:12px 16px;border:1px solid #dbe1d0;border-radius:6px;font-size:12px;color:#768669}
 .journey-quiet-control{position:absolute;right:48px;bottom:30px;width:34px;height:34px;border:1px solid #d7ddcf;border-radius:50%;background:#ffffffe6;color:#66765d;display:grid;place-items:center;box-shadow:0 4px 15px #35412b12}.journey-quiet-control:hover{background:#4d6145;color:white}
 @media(max-width:760px){.top-actions{gap:8px}.fullscreen-button span{display:none}.fullscreen-button{height:33px;width:28px;justify-content:center}.experience.immersive .tour-dock{bottom:15px}.experience.immersive .section-control{bottom:137px}.screen-note{top:115px;right:17px;max-width:245px}.experience.immersive .orbit-tools{bottom:180px}}
