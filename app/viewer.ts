@@ -505,21 +505,51 @@ export function createViewer(
     g.position.set(x, 0, z);
     g.rotation.y = rot;
     p.add(g);
-    box(g, 0, 0.61, 0.2, 0.45, 0.55, 0.19, white, 0.06);
-    ball(g, 0, 0.33, -0.07, 0.3, white, 0.72, 1, 1.2);
-    const ring = new T.Mesh(new T.TorusGeometry(0.19, 0.055, 10, 30), white);
-    ring.rotation.x = Math.PI / 2;
-    ring.scale.y = 1.3;
-    ring.position.set(0, 0.48, -0.11);
-    g.add(ring);
-    ball(g, 0, 0.458, -0.11, 0.17, mat('#52646a'), 0.85, 0.08, 1.3);
+    // Compact ceramic pan: tank, pedestal, seat and lid read clearly at small scale.
+    box(g, 0, 0.58, 0.22, 0.43, 0.58, 0.2, white, 0.055);
+    box(g, 0, 0.39, -0.07, 0.46, 0.22, 0.62, white, 0.12);
+    box(g, 0, 0.53, -0.16, 0.35, 0.07, 0.48, white, 0.06);
+    box(g, 0, 0.575, -0.18, 0.29, 0.025, 0.38, mat('#d9e2e2'), 0.035);
+    box(g, 0, 0.84, 0.22, 0.12, 0.025, 0.07, mat('#a7b5b5'), 0.018);
+    cyl(g, 0.08, 0.86, 0.19, 0.018, 0.012, black, 0.012);
   }
   function sink(p: T.Object3D, x: number, z: number) {
-    box(p, x, 0.45, z, 0.65, 0.8, 0.48, wood, 0.02);
-    box(p, x, 0.88, z, 0.7, 0.08, 0.52, white, 0.045);
-    ball(p, x, 0.918, z, 0.23, mat('#afbec0'), 1, 0.06, 0.7);
-    line(p, [x, 0.91, z + 0.15], [x, 1.15, z + 0.15], 0.025);
-    line(p, [x, 1.15, z + 0.15], [x, 1.15, z], 0.025);
+    box(p, x, 0.43, z, 0.62, 0.78, 0.46, wood, 0.035);
+    box(p, x, 0.86, z, 0.72, 0.08, 0.52, white, 0.045);
+    box(p, x, 0.905, z, 0.37, 0.045, 0.25, mat('#aebfc1'), 0.09);
+    box(p, x, 0.93, z, 0.27, 0.018, 0.15, mat('#718486'), 0.06);
+    line(p, [x, 0.93, z + 0.15], [x, 1.16, z + 0.15], 0.022);
+    line(p, [x, 1.16, z + 0.15], [x, 1.16, z + 0.03], 0.022);
+    box(p, x, 1.45, z - 0.025, 0.62, 0.8, 0.035, mat('#b8ced0', 0.2), 0.012);
+  }
+  function shower(p: T.Object3D, x: number, z: number, w = 1.05, d = 1.05) {
+    box(p, x, 0.03, z, w, 0.06, d, mat('#d9e1e0'), 0.025);
+    box(p, x, 0.065, z, w - 0.16, 0.018, d - 0.16, mat('#aabdbd'), 0.025);
+    box(p, x + w / 2 - 0.025, 1.18, z, 0.025, 2.35, d, glass);
+    box(p, x, 1.18, z - d / 2 + 0.02, w, 2.35, 0.025, glass);
+    line(
+      p,
+      [x - w / 2 + 0.18, 1.62, z - d / 2 + 0.06],
+      [x - w / 2 + 0.18, 1.62, z + 0.08],
+      0.018,
+      black,
+    );
+    line(
+      p,
+      [x - w / 2 + 0.18, 1.62, z + 0.08],
+      [x - w / 2 + 0.28, 1.62, z + 0.08],
+      0.018,
+      black,
+    );
+    cyl(p, x - w / 2 + 0.18, 1.64, z + 0.08, 0.11, 0.025, black, 0.11);
+    line(
+      p,
+      [x - w / 2 + 0.18, 1.64, z + 0.08],
+      [x - w / 2 + 0.18, 2.08, z + 0.08],
+      0.014,
+      black,
+    );
+    ball(p, x - w / 2 + 0.18, 2.13, z + 0.08, 0.14, white, 1, 0.45, 1);
   }
   function stairs(p: T.Group, up = true) {
     const g = new T.Group();
@@ -769,6 +799,7 @@ export function createViewer(
       sink(furn, 3.6, 8.72);
       toilet(furn, 4.15, SITE.houseDepth - 0.52);
       sink(furn, 4.19, 10.48);
+      shower(furn, 4.05, 9.2, 0.9, 1.0);
       box(furn, 4.68, 1.52, 10.48, 0.035, 0.8, 0.58, mat('#a5c0bf', 0.08, 0.6));
     }
     if (i === 1) {
@@ -791,6 +822,7 @@ export function createViewer(
       }
       toilet(furn, 0.78, 7.88);
       sink(furn, 0.57, 6.32);
+      shower(furn, 0.78, 7.0, 0.9, 0.95);
       box(furn, 0.77, 0.014, 7.1, 1.25, 0.02, 2.25, mat('#beced0'));
       stairs(interior);
     }
