@@ -1061,10 +1061,10 @@ export function createViewer(
   for (const x of [0.04, 4.72]) {
     const from = frontZ(x),
       len = boundaryZ(x) - from;
-    box(yard, x, 0.54, from + len / 2, 0.13, 1.15, len, cream);
-    box(yard, x, 1.13, from + len / 2, 0.18, 0.045, len, paving);
+    box(yard, x, 0.82, from + len / 2, 0.15, 1.72, len, cream);
+    box(yard, x, 1.7, from + len / 2, 0.21, 0.055, len, paving);
     for (const z of [from + 1, boundaryZ(x) - 3, boundaryZ(x)])
-      box(yard, x, 0.9, z, 0.2, 1.85, 0.2, cream);
+      box(yard, x, 1.1, z, 0.24, 2.25, 0.24, cream);
   }
   for (let z = 14.65; z < boundaryZ(0) - 0.25; z += 0.62)
     line(yard, [0.64, -0.018, z], [4.12, -0.018, z], 0.005, mat('#b0b9b1'));
@@ -1147,12 +1147,12 @@ export function createViewer(
   gateFrame.rotation.y = -Math.atan2(SITE.streetSkew, SITE.width);
   yard.add(gateFrame);
   for (const x of [-1.6, 1.6]) {
-    box(gateFrame, x, 1.02, 0, 0.22, 2.1, 0.25, cream);
-    box(gateFrame, x, 1.6, 0.15, 0.08, 0.22, 0.035, fence);
-    box(gateFrame, x, 1.6, 0.175, 0.05, 0.16, 0.014, mat('#ffe4b9'));
+    box(gateFrame, x, 1.28, 0, 0.26, 2.62, 0.29, cream);
+    box(gateFrame, x, 2.05, 0.17, 0.09, 0.24, 0.04, fence);
+    box(gateFrame, x, 2.05, 0.2, 0.055, 0.18, 0.016, mat('#ffe4b9'));
   }
   for (const x of [-2.075, 2.075])
-    box(gateFrame, x, 0.76, 0, 0.75, 1.55, 0.13, cream);
+    box(gateFrame, x, 1.1, 0, 0.75, 2.25, 0.15, cream);
   const gateLeaves: T.Group[] = [];
   for (let side = 0; side < 2; side++) {
     const g = new T.Group();
@@ -1160,11 +1160,11 @@ export function createViewer(
     gateFrame.add(g);
     gateLeaves.push(g);
     const sign = side === 0 ? 1 : -1;
-    for (const y of [0.12, 1.86])
+    for (const y of [0.14, 2.28])
       box(g, sign * 0.735, y, 0, 1.47, 0.045, 0.055, fence);
     for (let j = 0; j < 16; j++)
-      box(g, sign * (0.025 + j * 0.095), 0.99, 0, 0.035, 1.74, 0.045, fence);
-    box(g, sign * 1.35, 0.99, 0.055, 0.025, 0.33, 0.025, wood);
+      box(g, sign * (0.025 + j * 0.095), 1.21, 0, 0.035, 2.1, 0.045, fence);
+    box(g, sign * 1.35, 1.21, 0.055, 0.025, 0.36, 0.025, wood);
   }
   box(gateFrame, 0, -0.006, -0.22, 2.92, 0.015, 0.1, fence);
   let mode = 'free',
