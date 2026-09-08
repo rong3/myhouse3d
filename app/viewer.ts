@@ -341,14 +341,36 @@ export function createViewer(
         0,
         leafWidth,
         2.2,
-        0.055,
-        mat('#9ab8ba', 0.28, 0.05),
+        0.06,
+        wood,
         0.01,
+      );
+      box(
+        leaf,
+        side * (leafWidth / 2),
+        1.34,
+        -0.038,
+        leafWidth - 0.14,
+        1.38,
+        0.012,
+        mat('#58777b', 0.34, 0.08),
+        0.008,
       );
       box(leaf, side * (leafWidth / 2), 1.1, -0.035, 0.035, 2.16, 0.07, black);
       box(leaf, side * (leafWidth / 2), 1.1, 0, leafWidth, 0.035, 0.07, black);
       box(leaf, side * (leafWidth / 2), 2.18, 0, leafWidth, 0.035, 0.07, black);
       box(leaf, side * (leafWidth / 2), 0.03, 0, leafWidth, 0.035, 0.07, black);
+      box(
+        leaf,
+        side * (leafWidth / 2),
+        0.43,
+        -0.045,
+        leafWidth - 0.14,
+        0.62,
+        0.012,
+        wood,
+        0.008,
+      );
       box(leaf, side * 0.12, 1.08, -0.065, 0.035, 0.07, 0.035, black, 0.01);
     }
   }
@@ -708,6 +730,17 @@ export function createViewer(
         wall(walls, 0, SITE.houseDepth, 0.98, SITE.houseDepth);
         wall(walls, 3.78, SITE.houseDepth, SITE.width, SITE.houseDepth);
         doubleDoor(walls, 2.38, SITE.houseDepth, 2.8);
+        box(
+          g,
+          2.38,
+          -0.08,
+          SITE.houseDepth + 0.08,
+          2.9,
+          0.12,
+          0.34,
+          stone,
+          0.02,
+        );
       } else {
         for (const [a, b] of [
           [0, 0.5],
